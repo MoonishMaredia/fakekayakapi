@@ -9,6 +9,13 @@ from config import Settings
 from openai import AsyncOpenAI
 import os
 import sys
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = AsyncOpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
 
 api_path = os.path.abspath('./API')
 sys.path.append(api_path)
