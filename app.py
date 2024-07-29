@@ -41,7 +41,8 @@ async def root():
 
 @app.post("/makeGPTRequests")
 async def make_gpt_requests(request: Request, gptRequest: GPTRequest):
-    print(f"Received request: {gptRequest}")
+    
+    print(f"Received request")
 
     try:
         async def get_completion():
