@@ -20,3 +20,9 @@ from pydantic import (
     constr,
     Field,
 )
+
+
+class GPTRequest(BaseModel):
+    userMessage: str
+    prevAIMessage: str
+    inputObjString: str
