@@ -2,6 +2,7 @@ from serpapi import GoogleSearch
 import json
 import os
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 
@@ -94,25 +95,36 @@ def generate_params(departue_airport, arrival_airport):
     "departure_id": departue_airport,
     "arrival_id": arrival_airport,
     "outbound_date": "2024-09-15",
-    "return_date": "2024-09-30",
+    # "return_date": "2024-09-30",
     "currency": "USD",
     "show_hidden": "true",
-    "travel_class": "1"
+    "travel_class": "1",
+    "type": 2
   }
   
   return params
 
 if __name__=="__main__":
-  airportCodeKeys = list(airport_codes.keys())[0:3]
-  print(airportCodeKeys)
-  for departure in airportCodeKeys:
-    for arrival in airportCodeKeys:
-      if(departure==arrival):
-        continue
-      else:
-        params = generate_params(departure, arrival)
-        search = GoogleSearch(params)
-        results = search.get_dict()
-        results_file_name = departure + "_" + arrival + ".json"
-        with open(results_file_name, "w") as f:
-          json.dump(results, f)
+  print(len([name for name in os.listdir('.') if os.path.isfile(name)]))
+  # airportCodeKeys = list(airport_codes.keys())
+  # print(len(airportCodeKeys))
+  # counter = 0
+
+  # for departure in airportCodeKeys:
+  #   for arrival in airportCodeKeys:
+  #     print(departure, arrival)
+  #     if(departure==arrival): continue
+
+  #     else:
+  #       results_file_name = departure + "_" + arrival + ".json"
+  #       if(os.path.isfile(results_file_name)): continue
+  #       else:
+  #         counter +=1
+  #         params = generate_params(departure, arrival)
+  #         search = GoogleSearch(params)
+  #         results = search.get_dict()
+  #         with open(results_file_name, "w") as f:
+  #           json.dump(results, f)
+          
+  #         if(counter == 950):
+  #           time.sleep(3600)
