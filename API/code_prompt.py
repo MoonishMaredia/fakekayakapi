@@ -17,7 +17,7 @@ def get_code_prompt(prevAIMessage):
         f"setStartDate, valid values include all dates between today and a year from today. For reference, today's date is {date}, [setStartDate, 2024-08-01]"
         f"setReturnDate, valid values include all dates between today and a year from today and should be greater than the start_date. For reference, today's date is {date}, [setReturnDate, 2024-08-19]"
         f"setPassengers, valid values are 1-10, [setPassengers, 1]"
-        f"setSeatType, valid values are Economy or Business or First, [setSeatType, Business]"
+        f"setSeatType, valid values are Economy or Business, [setSeatType, Business]"
         f"setCarryOnBags, valid values include 0 or 1, [setCarryOnBags, 1]"
         f"setCheckedBags, valid values include 0 up to 5, [setCheckedBags, 1]"
         f"> "
