@@ -11,6 +11,9 @@ class GPTRequest(BaseModel):
     prevAIMessage: str
     inputObjString: str
 
+class TriageRequest(BaseModel):
+    userMessage: str
+    prevAIMessage: str
 
 class FlightDataRequest(BaseModel):
     originCode: str

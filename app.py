@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from models import GPTRequest, FlightDataRequest
+from models import GPTRequest, TriageRequest, FlightDataRequest
 from config import Settings
 from openai import AsyncOpenAI
 from pymongo.mongo_client import MongoClient
@@ -28,6 +28,8 @@ sys.path.append(api_path)
 from completion_prompt import get_completion_prompt
 from code_prompt import get_code_prompt
 from user_prompt import get_user_prompt
+from triage_prompt import get_triage_prompt
+
 from get_flight_data import query_data
 
 app = FastAPI()
@@ -87,6 +89,41 @@ async def make_gpt_requests(request: Request, gptRequest: GPTRequest):
             "completionResponse": completion_response.choices[0].message.content,
             "codeResponse": code_response.choices[0].message.content,
             "userResponse": user_response.choices[0].message.content,
+        }
+
+        return response
+
+    except ValueError as ve:
+        print(f"Value error: {str(ve)}")
+        raise HTTPException(status_code=422, detail=str(ve))
+    
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
+@app.post("/makeTriageRequest")
+async def make_triage_request(request: Request, triageRequest: TriageRequest):
+    
+    print(f"Received request")
+
+    try:
+        async def get_triage():
+            return await client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": get_triage_prompt(triageRequest.prevAIMessage)},
+                    {"role": "user", "content": triageRequest.userMessage},
+                ],
+            )
+
+        triage_response_list = await asyncio.gather(
+            get_triage())
+
+        triage_response = triage_response_list[0]
+
+        response = {
+            "triageResponse": triage_response.choices[0].message.content,
         }
 
         return response
