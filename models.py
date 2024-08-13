@@ -19,3 +19,9 @@ class FlightDataRequest(BaseModel):
     originCode: str
     destinationCode: str
     tripType: str
+    origDate: str
+    returnDate: Optional[str]
+
+class FlightScalarRequest(BaseModel):
+    date: str
+    numFlights: int

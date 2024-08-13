@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from models import GPTRequest, TriageRequest, FlightDataRequest
+from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest
 from config import Settings
 from openai import AsyncOpenAI
 from pymongo.mongo_client import MongoClient
@@ -29,6 +29,8 @@ from completion_prompt import get_completion_prompt
 from code_prompt import get_code_prompt
 from user_prompt import get_user_prompt
 from triage_prompt import get_triage_prompt
+from get_flight_scalars import generate_scalars
+
 
 from get_flight_data import query_data
 
@@ -145,11 +147,16 @@ async def get_flight_results(request: Request, flightDataRequest: FlightDataRequ
         input_dict = flightDataRequest.dict()
         orig_code = input_dict['originCode']
         dest_code = input_dict['destinationCode']
+        orig_date = input_dict['origDate']
         flightsTo = query_data(mongoClient, "fakekayak", "flights", orig_code, dest_code)
         result['flightsTo'] = flightsTo
+        result['scalarsTo'] = generate_scalars(orig_date, len(flightsTo))
         if(input_dict['tripType']=="Round-trip"):
             flightsReturn = query_data(mongoClient, "fakekayak", "flights", dest_code, orig_code)
             result['flightsReturn'] = flightsReturn
+            return_date = input_dict['returnDate']
+            result['scalarsReturn'] = generate_scalars(return_date, len(flightsReturn))
+
         return result
 
     # In your exception handling blocks:
@@ -157,6 +164,23 @@ async def get_flight_results(request: Request, flightDataRequest: FlightDataRequ
         print(f"Unexpected error: {str(e)}")
         print(traceback.format_exc())  # This will print the full traceback
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/getFlightScalars")
+async def get_flight_results(request: Request, flightScalarRequest: FlightScalarRequest):
+    try: 
+        input_dict = flightScalarRequest.dict()
+        orig_date = input_dict['date']
+        num_flights = input_dict['numFlights']
+        result = generate_scalars(orig_date, num_flights)
+        return result
+
+    # In your exception handling blocks:
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        print(traceback.format_exc())  # This will print the full traceback
+        raise HTTPException(status_code=500, detail=str(e))   
+
 
 
 # When shutting down your application, close the client
