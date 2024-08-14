@@ -151,11 +151,10 @@ async def get_flight_results(request: Request, flightDataRequest: FlightDataRequ
         flightsTo = query_data(mongoClient, "fakekayak", "flights", orig_code, dest_code)
         result['flightsTo'] = flightsTo
         result['scalarsTo'] = generate_scalars(orig_date, len(flightsTo))
-        if(input_dict['tripType']=="Round-trip"):
-            flightsReturn = query_data(mongoClient, "fakekayak", "flights", dest_code, orig_code)
-            result['flightsReturn'] = flightsReturn
-            return_date = input_dict['returnDate']
-            result['scalarsReturn'] = generate_scalars(return_date, len(flightsReturn))
+        flightsReturn = query_data(mongoClient, "fakekayak", "flights", dest_code, orig_code)
+        result['flightsReturn'] = flightsReturn
+        return_date = input_dict['returnDate']
+        result['scalarsReturn'] = generate_scalars(return_date, len(flightsReturn))
 
         return result
 
