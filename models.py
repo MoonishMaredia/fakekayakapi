@@ -5,7 +5,6 @@ from pydantic import (
     BaseModel,
 )
 
-
 class GPTRequest(BaseModel):
     userMessage: str
     prevAIMessage: str
@@ -14,6 +13,9 @@ class GPTRequest(BaseModel):
 class TriageRequest(BaseModel):
     userMessage: str
     prevAIMessage: str
+
+class UpdateRequest(BaseModel):
+    userMessage: str
 
 class FlightDataRequest(BaseModel):
     originCode: str

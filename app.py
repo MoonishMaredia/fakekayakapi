@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest
+from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest
 from config import Settings
 from openai import AsyncOpenAI
 from pymongo.mongo_client import MongoClient
@@ -30,6 +30,7 @@ from code_prompt import get_code_prompt
 from user_prompt import get_user_prompt
 from triage_prompt import get_triage_prompt
 from get_flight_scalars import generate_scalars
+from get_update_prompt import update_prompt
 
 
 from get_flight_data import query_data
@@ -139,6 +140,41 @@ async def make_triage_request(request: Request, triageRequest: TriageRequest):
         raise HTTPException(status_code=500, detail=str(e))
     
 
+@app.post("/makeUpdatedRequest")
+async def make_update_request(request: Request, updateRequest: UpdateRequest):
+    
+    print(f"Received request")
+
+    try:
+        async def get_update():
+            return await client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": get_update_prompt(updateRequest.prevAIMessage)},
+                    {"role": "user", "content": updateRequest.userMessage},
+                ],
+            )
+
+        update_response_list = await asyncio.gather(
+            get_update())
+
+        update_response = update_response_list[0]
+
+        response = {
+            "updateResponse": update_response.choices[0].message.content,
+        }
+
+        return response
+
+    except ValueError as ve:
+        print(f"Value error: {str(ve)}")
+        raise HTTPException(status_code=422, detail=str(ve))
+    
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
 @app.post("/getFlightResults")
 async def get_flight_results(request: Request, flightDataRequest: FlightDataRequest):
     print(flightDataRequest)
@@ -179,6 +215,9 @@ async def get_flight_results(request: Request, flightScalarRequest: FlightScalar
         print(f"Unexpected error: {str(e)}")
         print(traceback.format_exc())  # This will print the full traceback
         raise HTTPException(status_code=500, detail=str(e))   
+    
+
+
 
 
 
