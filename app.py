@@ -29,8 +29,8 @@ from completion_prompt import get_completion_prompt
 from code_prompt import get_code_prompt
 from user_prompt import get_user_prompt
 from triage_prompt import get_triage_prompt
+from update_prompt import get_update_prompt
 from get_flight_scalars import generate_scalars
-from get_update_prompt import update_prompt
 
 
 from get_flight_data import query_data
@@ -115,7 +115,7 @@ async def make_triage_request(request: Request, triageRequest: TriageRequest):
             return await client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": get_triage_prompt(triageRequest.prevAIMessage)},
+                    {"role": "system", "content": get_triage_prompt()},
                     {"role": "user", "content": triageRequest.userMessage},
                 ],
             )
@@ -140,7 +140,7 @@ async def make_triage_request(request: Request, triageRequest: TriageRequest):
         raise HTTPException(status_code=500, detail=str(e))
     
 
-@app.post("/makeUpdatedRequest")
+@app.post("/makeUpdateRequest")
 async def make_update_request(request: Request, updateRequest: UpdateRequest):
     
     print(f"Received request")
@@ -150,7 +150,7 @@ async def make_update_request(request: Request, updateRequest: UpdateRequest):
             return await client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": get_update_prompt(updateRequest.prevAIMessage)},
+                    {"role": "system", "content": get_update_prompt(updateRequest.userMessage, updateRequest.inputObjString)},
                     {"role": "user", "content": updateRequest.userMessage},
                 ],
             )

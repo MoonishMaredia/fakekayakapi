@@ -1,10 +1,10 @@
 from datetime import datetime
 
-def get_triage_prompt(prevAIMessage):
+def get_triage_prompt():
     date = datetime.now().strftime("%d-%m-%Y")
     return (
         f"You are an AI assistant for a flight search website. Your role is to triage a user's message into one or more actions. The user has generated an initial set of flight results and is now narrowing their options and finalizing flight details."
-        f"\n\nYour task is to analyze the user's input, along with the previous AI response ({prevAIMessage}), to determine which of the following actions they want to execute:"
+        f"\n\nYour task is to analyze the user's input to determine which of the following actions they want to execute:"
         f"\n1) Update flight search details"
         f"\n2) Sort the flight results"
         f"\n3) Filter the flight results"
