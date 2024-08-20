@@ -17,6 +17,9 @@ class UpdateRequest(BaseModel):
     userMessage: str
     inputObjString: str
 
+class SortRequest(BaseModel):
+    userMessage: str
+
 class FlightDataRequest(BaseModel):
     originCode: str
     destinationCode: str

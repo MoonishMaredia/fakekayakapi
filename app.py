@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest
+from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest, SortRequest
 from config import Settings
 from openai import AsyncOpenAI
 from pymongo.mongo_client import MongoClient
@@ -30,6 +30,7 @@ from code_prompt import get_code_prompt
 from user_prompt import get_user_prompt
 from triage_prompt import get_triage_prompt
 from update_prompt import get_update_prompt
+from sort_prompt import get_sort_prompt
 from get_flight_scalars import generate_scalars
 
 
@@ -175,6 +176,41 @@ async def make_update_request(request: Request, updateRequest: UpdateRequest):
         raise HTTPException(status_code=500, detail=str(e))
     
 
+@app.post("/makeSortRequest")
+async def make_sort_request(request: Request, sortRequest: SortRequest):
+    
+    print(f"Received request")
+
+    try:
+        async def get_sort():
+            return await client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": get_sort_prompt()},
+                    {"role": "user", "content": sortRequest.userMessage},
+                ],
+            )
+
+        sort_response_list = await asyncio.gather(
+            get_sort())
+
+        sort_response = sort_response_list[0]
+
+        response = {
+            "sortResponse": sort_response.choices[0].message.content,
+        }
+
+        return response
+
+    except ValueError as ve:
+        print(f"Value error: {str(ve)}")
+        raise HTTPException(status_code=422, detail=str(ve))
+    
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
 @app.post("/getFlightResults")
 async def get_flight_results(request: Request, flightDataRequest: FlightDataRequest):
     print(flightDataRequest)
@@ -216,10 +252,6 @@ async def get_flight_results(request: Request, flightScalarRequest: FlightScalar
         print(traceback.format_exc())  # This will print the full traceback
         raise HTTPException(status_code=500, detail=str(e))   
     
-
-
-
-
 
 # When shutting down your application, close the client
 @app.on_event("shutdown")
