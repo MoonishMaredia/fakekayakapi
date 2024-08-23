@@ -95,7 +95,7 @@ def get_update_prompt(prevAIMessage, currentInputs):
 
     # Available Set Functions and Current Request Context
     f"Below are two items to assist you:"
-    f" 1) A list of available set functions for relevant flight search, organized in a comma-separated format."
+    f" 1) A list of available set functions for relevant flight search."
     f" 2) A 'currentStoredRequest' object summarizing the user's current flight search request."
     f" Use both items to identify the appropriate set function, especially when the user's message is ambiguous."
     f"\n\n"
