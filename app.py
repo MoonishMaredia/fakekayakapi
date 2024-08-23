@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest, SortRequest
+from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest, FilterRequest, SortRequest
 from config import Settings
 from openai import AsyncOpenAI
 from pymongo.mongo_client import MongoClient
