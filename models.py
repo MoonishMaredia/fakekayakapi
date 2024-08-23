@@ -20,6 +20,10 @@ class UpdateRequest(BaseModel):
 class SortRequest(BaseModel):
     userMessage: str
 
+class FilterRequest(BaseModel):
+    userMessage: str
+    currentFilters: str
+
 class FlightDataRequest(BaseModel):
     originCode: str
     destinationCode: str

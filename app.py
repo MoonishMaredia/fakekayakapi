@@ -30,6 +30,7 @@ from code_prompt import get_code_prompt
 from user_prompt import get_user_prompt
 from triage_prompt import get_triage_prompt
 from update_prompt import get_update_prompt
+from filter_prompt import get_filter_prompt
 from sort_prompt import get_sort_prompt
 from get_flight_scalars import generate_scalars
 
@@ -198,6 +199,40 @@ async def make_sort_request(request: Request, sortRequest: SortRequest):
 
         response = {
             "sortResponse": sort_response.choices[0].message.content,
+        }
+
+        return response
+
+    except ValueError as ve:
+        print(f"Value error: {str(ve)}")
+        raise HTTPException(status_code=422, detail=str(ve))
+    
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/makeFilterRequest")
+async def make_filter_request(request: Request, filterRequest: FilterRequest):
+    
+    print(f"Received request")
+
+    try:
+        async def get_filters():
+            return await client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": get_filter_prompt(filterRequest.currentFilters)},
+                    {"role": "user", "content": filterRequest.userMessage},
+                ],
+            )
+
+        filter_response_list = await asyncio.gather(
+            get_filters())
+
+        filter_response = filter_response_list[0]
+
+        response = {
+            "filterResponse": filter_response.choices[0].message.content,
         }
 
         return response
