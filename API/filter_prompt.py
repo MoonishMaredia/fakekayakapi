@@ -1,7 +1,7 @@
 # prompts/code_prompt.py
 from datetime import datetime
 
-def get_update_prompt(currentFilters):
+def get_filter_prompt(currentFilters):
 
     return (
     f"You are an AI assistant for a flight search website. Your task is to analyze the user's message and determine which set functions need to be run to FILTER their flight search."
@@ -39,7 +39,7 @@ def get_update_prompt(currentFilters):
 
      # Important Notes:
     f"Important Note 1: If the user specifies only value of a filter for filter items such as departureTime, arrivalTime, layoverDuration, totalDuration, use the currentFilters object to fill in the missing values. For example, if the user specifies a maximum layover duration of 4 hours, and no minimum is provided, retain the current minimum layover duration from currentFilters.\n"
-    f"Important Note 2: If the user requests to clear all existing filters, the response should be [CLEARFILTERS]. Any subsequent filters specified by the user should be applied after clearing the current filters. Example: [CLEARFILTERS, stops, 0].\n\n"
+    f"Important Note 2: If the user requests to clear all existing filters, the response should be [CLEARFILTERS, True]. Any subsequent filters specified by the user should be applied after clearing the current filters. Example: [CLEARFILTERS, True, stops, 0].\n\n"
 
     # Example Responses
     f"Example Responses:\n"
@@ -52,7 +52,7 @@ def get_update_prompt(currentFilters):
     f"UserMessage: Don't show flights that have total travel time of more than 10 hours, YourResponse: [layoverDuration, [0, 10]]\n"
     f"UserMessage: Only show non-stop flights that are not Spirit Airlines and cost less than 300, YourResponse: [stops, 0, airlines, '{{...,Spirit:false}}', price:300]\n"
     f"UserMessage: Only show flights that takeoff before 10am and land after 5pm, YourResponse: [departureTime, [0,10], arrivalTime, [17,24]]\n"
-    f"UserMessage: Clear the filters and add filter to only show flights less than $500, YourResponse: [CLEARFILTERS, stops, 0]\n"
+    f"UserMessage: Clear the filters and add filter to only show flights less than $500, YourResponse: [CLEARFILTERS, True, stops, 0]\n"
     f"User Message: Update the destination airport to LaGuardia, YourResponse: []\n"
     f"User Message: Sort flights based on Shortest Duration, YourResponse: []\n"
 
@@ -67,8 +67,8 @@ def get_update_prompt(currentFilters):
     f"UserMessage: Don't show flights that have total travel time of more than 10 hours. YourResponse: [totalDuration, [0, 10]]\n"
     f"UserMessage: Only show non-stop flights that are not Spirit Airlines and cost less than 300. YourResponse: [stops, 0, airlines, '{{...,Spirit:false}}', price, 300]\n"
     f"UserMessage: Only show flights that take off before 10 AM and land after 5 PM. YourResponse: [departureTime, [0,10], arrivalTime, [17,24]]\n"
-    f"UserMessage: Clear applied filters. YourResponse: [CLEARFILTERS]\n"
-    f"UserMessage: Clear the filters and add filter to only show flights less than $500. YourResponse: [CLEARFILTERS, price, 500]\n"
+    f"UserMessage: Clear applied filters. YourResponse: [CLEARFILTERS, True]\n"
+    f"UserMessage: Clear the filters and add filter to only show flights less than $500. YourResponse: [CLEARFILTERS, True, price, 500]\n"
     f"User Message: Update the destination airport to LaGuardia. YourResponse: []\n"
     f"User Message: Sort flights based on Shortest Duration. YourResponse: []\n\n"
 
