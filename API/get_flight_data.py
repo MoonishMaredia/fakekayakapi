@@ -1,4 +1,4 @@
-from bson import json_util, ObjectId
+from json import json_util, ObjectId
 import json
 
 def query_data(client, db_name, collection_name, orig_code, dest_code):
