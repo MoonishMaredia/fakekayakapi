@@ -6,3 +6,4 @@ pydantic==1.10.2
 requests==2.32.3
 openai==1.37.1
 pymongo==4.8.0
+python-dotenv==0.21.0
