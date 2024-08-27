@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest, FilterRequest, SortRequest
+from models import GPTRequest, TriageRequest, FlightDataRequest, FlightScalarRequest, UpdateRequest, FilterRequest, SortRequest, BookingRequest
 from config import Settings
 from openai import AsyncOpenAI
 from pymongo.mongo_client import MongoClient
@@ -32,6 +32,7 @@ from triage_prompt import get_triage_prompt
 from update_prompt import get_update_prompt
 from filter_prompt import get_filter_prompt
 from sort_prompt import get_sort_prompt
+from booking_prompt import get_booking_prompt
 from get_flight_scalars import generate_scalars
 
 
@@ -233,6 +234,41 @@ async def make_filter_request(request: Request, filterRequest: FilterRequest):
 
         response = {
             "filterResponse": filter_response.choices[0].message.content,
+        }
+
+        return response
+
+    except ValueError as ve:
+        print(f"Value error: {str(ve)}")
+        raise HTTPException(status_code=422, detail=str(ve))
+    
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/makeBookingRequest")
+async def make_booking_request(request: Request, bookingRequest: BookingRequest):
+    
+    print(f"Received request")
+
+    try:
+        async def get_booking():
+            return await client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": get_booking_prompt(bookingRequest.displayedFlights)},
+                    {"role": "user", "content": bookingRequest.userMessage},
+                ],
+            )
+
+        booking_response_list = await asyncio.gather(
+            get_booking())
+
+        book_response = booking_response_list[0]
+
+        response = {
+            "bookResponse": book_response.choices[0].message.content,
         }
 
         return response

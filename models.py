@@ -24,6 +24,10 @@ class FilterRequest(BaseModel):
     userMessage: str
     currentFilters: str
 
+class BookingRequest(BaseModel):
+    userMessage: str
+    displayedFlights: str
+
 class FlightDataRequest(BaseModel):
     originCode: str
     destinationCode: str
