@@ -126,7 +126,7 @@ def get_update_prompt(prevAIMessage, currentInputs):
     f"Example Responses:\n"
     f"UserMessage: I want to change trip to round trip, YourResponse: [setTripType, Round-trip]\n"
     f"UserMessage: I want to fly from Houston to Dallas instead, YourResponse: [setFlyingFrom, IAH, setFlyingTo, DFW]\n"
-    f"UserMessage: Make it 2 passengers and business class seats, YourResponse: [setPassengers, 2, setSeatType, First]\n"
+    f"UserMessage: Make it 2 passengers and business class seats, YourResponse: [setPassengers, 2, setSeatType, Business]\n"
     f"UserMessage: Change it to round trip and flying from houston to dallas flying out on 2024-08-01 and flying back 2024-08-31, YourResponse: [setTripType, Round-trip, setFlyingFrom, IAH, setFlyingTo, DFW, setStartDate, 2024-08-01, setReturnDate, 2024-08-31]\n"
     f"UserMessage: Update airport to Hobby and the filter out flights with stops, YourResponse: [setTripType, HOU]\n"
     f"UserMessage: Update return airport to DFW and only show flights with price less than 500 and sort them by travel time, YourResponse: [setTripType, DFW]\n"

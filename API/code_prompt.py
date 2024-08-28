@@ -104,7 +104,7 @@ def get_code_prompt(prevAIMessage):
         f"[] "
         f"[setTripType, Round-trip] "
         f"[setFlyingFrom, IAH, setFlyingTo, DFW] "
-        f"[setPassengers, 2, setSeatType, First] "
+        f"[setPassengers, 2, setSeatType, Business] "
         f"[setTripType, Round-trip, setFlyingFrom, IAH, setFlyingTo, DFW, setStartDate, 2024-08-01] "
         f"It's completely fine if no information can be set because it is not part of the user's message or is invalid. In such cases, you should return [] "
     )

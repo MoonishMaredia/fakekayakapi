@@ -102,7 +102,7 @@ def get_user_prompt(inputObjString, prevAIMessage):
         f"4. (required) start_date: Between today and one year from now. For reference, today's date is {date}"
         f"5. (required for Round-trip) return_date: Between start_date and one year from now. For reference, today's date is {date}"
         f"6. (required) num_passengers: 1-5"
-        f"7. (optional) seat_type: Economy or Business or First"
+        f"7. (optional) seat_type: Economy or Business"
         f"8. (optional) num_carryOn: 0-1 carry-on bags per passenger"
         f"9. (optional) num_checked: 0-3 checked bags per passenger"
         f"Airport Codes Object: {airportCodes}"
