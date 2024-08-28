@@ -91,6 +91,8 @@ async def make_gpt_requests(request: Request, gptRequest: GPTRequest):
             get_completion(), get_code(), get_user()
         )
 
+        print(completion_response)
+
         response = {
             "completionResponse": completion_response.choices[0].message.content,
             "codeResponse": code_response.choices[0].message.content,
