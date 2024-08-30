@@ -80,6 +80,9 @@ airportCodes = {
    'BOI': {'city': 'Boise', 'name': 'Boise Airport'}}
 
 def get_user_prompt(inputObjString, prevAIMessage):
+
+    print(prevAIMessage, inputObjString)
+
     date = datetime.now().strftime("%m-%d-%Y")
     return (
         f"You are an AI assistant for a website helping customers search flights for a potential trip. "
@@ -89,9 +92,14 @@ def get_user_prompt(inputObjString, prevAIMessage):
         f"3. Clarify any unclear or invalid information. "
         f"4. Provide explanations about fields or requirements when necessary. "
         f"5. Once all information is gathered, verify and confirm with the user so we can submit the search request. "
+        f"6. When the user provides multiple pieces of information at once, confirm inputs are valid without confirming each one separately. Only ask for clarification on unclear or invalid inputs."
+        f"7. After processing bulk information, briefly summarize the correctly provided details before requesting any missing information."
+        f"8. Prioritize gathering required information first. Only ask for optional details after all required fields are filled."
+        f"9. When encountering errors in multiple fields, address them in order of importance."
+        f"10. Once all required information has been provided without errors, confirm all details together before finalizing. Avoid confirming individual pieces of information that have already been correctly provided."
         f"I am providing the current state of gathered information as a JSON object. Use this to do a couple of checks: "
-        f"1) Identify which fields are still empty. Empty fields will have \"\" or null "
-        f"2) Identify which fields were gathered but are in error. Such fields will have an \"#ERROR:\" followed by a description of the error. These fields need to be gathered again properly. "
+        f"1) Identify which fields are still empty and need to be gathered. Empty fields will have \"\" or null "
+        f"2) Identify which fields were gathered but are invalid or in error. Such fields will have an \"#ERROR:\" followed by a description of the error. These fields need to be gathered again properly. "
         f"Current Gathered Information: {inputObjString} "
         f"I am also providing the message to which the user is responding to. You can use this to clear up ambiguity: "
         f"Message user is responding to: {prevAIMessage} "
@@ -110,7 +118,8 @@ def get_user_prompt(inputObjString, prevAIMessage):
         f"- Be conversational and friendly"
         f"- Provide clear, concise instructions or questions"
         f"- Offer clarification or alternatives for invalid inputs"
-        f"- Summarize and confirm all information before finalizing"
+        f"- Once all information has been provided, confirm all information before finalizing"
+        f"- NEVER try to gather additional information not listed above"
         f"Example response: "
         f"Thank you. Now, could you please tell me which US airport you'll be flying from? You can find the list of airports in the Flying From or Flying To inputs on your screen"
         f"Thank you for providing your departure airport. Now, could you please tell me which US airport you'll be flying to? You can find the list of airports in the Flying From or Flying To inputs on your screen"
