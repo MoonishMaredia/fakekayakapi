@@ -86,45 +86,62 @@ airport_codes = {
 
 api_key=os.getenv("SERPAPI_KEY")
 
-def generate_params(departue_airport, arrival_airport):
-  params = {
-    "api_key": api_key,
-    "engine": "google_flights",
-    "hl": "en",
-    "gl": "us",
-    "departure_id": departue_airport,
-    "arrival_id": arrival_airport,
-    "outbound_date": "2024-09-15",
-    # "return_date": "2024-09-30",
-    "currency": "USD",
-    "show_hidden": "true",
-    "travel_class": "1",
-    "type": 2
-  }
-  
-  return params
+def generate_params(departure_airport, arrival_airport):
+    params = {
+        "api_key": api_key,
+        "engine": "google_flights",
+        "hl": "en",
+        "gl": "us",
+        "departure_id": departure_airport,
+        "arrival_id": arrival_airport,
+        "outbound_date": "2024-09-15",
+        "currency": "USD",
+        "show_hidden": "true",
+        "travel_class": "1",
+        "type": 2
+    }
+    return params
 
-if __name__=="__main__":
-  print(len([name for name in os.listdir('.') if os.path.isfile(name)]))
-  # airportCodeKeys = list(airport_codes.keys())
-  # print(len(airportCodeKeys))
-  # counter = 0
+def check_error_in_json(file_path):
+    try:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        return data.get('error') == "Your account has been throttled. You are exceeding 1,000 searches per hour. Please upgrade your plan, spread out your searches, or contact support."
+    except json.JSONDecodeError:
+        return False
+    except FileNotFoundError:
+        return True  # Treat missing files as needing to be processed
 
-  # for departure in airportCodeKeys:
-  #   for arrival in airportCodeKeys:
-  #     print(departure, arrival)
-  #     if(departure==arrival): continue
+if __name__ == "__main__":
+    airportCodeKeys = list(airport_codes.keys())
+    counter = 0
 
-  #     else:
-  #       results_file_name = departure + "_" + arrival + ".json"
-  #       if(os.path.isfile(results_file_name)): continue
-  #       else:
-  #         counter +=1
-  #         params = generate_params(departure, arrival)
-  #         search = GoogleSearch(params)
-  #         results = search.get_dict()
-  #         with open(results_file_name, "w") as f:
-  #           json.dump(results, f)
-          
-  #         if(counter == 950):
-  #           time.sleep(3600)
+    for departure in airportCodeKeys:
+        for arrival in airportCodeKeys:
+            if departure == arrival:
+                continue
+
+            results_file_name = f"{departure}_{arrival}.json"
+            
+            if check_error_in_json(results_file_name):
+                print(f"Processing {departure} to {arrival}")
+                params = generate_params(departure, arrival)
+                search = GoogleSearch(params)
+                results = search.get_dict()
+                
+                with open(results_file_name, "w") as f:
+                    json.dump(results, f)
+                
+                counter += 1
+                print(f"Processed {counter} combinations")
+                
+                if counter % 50 == 0:
+                    print("Pausing for 60 seconds to avoid rate limiting")
+                    time.sleep(60)
+                
+                if counter == 950:
+                    print("Reached 950 requests. Pausing for 1 hour.")
+                    time.sleep(3600)
+                    counter = 0  # Reset counter after the pause
+
+    print("All error-containing files have been reprocessed.")
